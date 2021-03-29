@@ -19,6 +19,21 @@ public class main {
 
         nodeTrainList = getNodeList(trainSetAddress);
 
+        int n=0;
+        HashMap<String,Integer> answerMap = new HashMap<>();
+        for (Node node : nodeTrainList) {
+            if (!answerMap.containsKey(node.getNodeClassName()))
+                answerMap.put(node.getNodeClassName(),n++);
+
+            if (answerMap.size()==2)
+                break;
+        }
+
+        Collections.shuffle(nodeTrainList);
+        Perceptron perceptron = new Perceptron(nodeTrainList.get(0).getAttributesColumn().size(),alpha);
+        for (Node value : nodeTrainList)
+            perceptron.learn(value, answerMap.get(value.getNodeClassName()));
+
         if (testSetAddress.equals("MY OWN VECTOR")) {
             while (true) {
                 System.out.println("Pass correct vector [split with \";\"]");
@@ -28,30 +43,31 @@ public class main {
                 List<Node> nodeSet = new ArrayList<>();
                 String[] tmp = line.split(";");
                 List<Double> attributesColumn = new ArrayList<>();
+
+                for (int i = 0; i < tmp.length - 1; i++)
+                    attributesColumn.add(Double.parseDouble(tmp[i]));
+
+                nodeSet.add(new Node(attributesColumn, tmp[tmp.length - 1]));
+                nodeTestList = nodeSet;
+
+
+
+                for (Node node : nodeTestList) {
+                    int y = perceptron.evaluate(node);
+                    for (String key :answerMap.keySet())
+                        if (answerMap.get(key)==y)
+                            System.out.println("Answer: "+ key+"\n");
+
+                }
             }
         }
         else{
             nodeTestList = getNodeList(testSetAddress);
 
-            int n=0;
-            HashMap<String,Integer> answerMap = new HashMap<>();
-            for (Node node : nodeTrainList) {
-                if (!answerMap.containsKey(node.getNodeClassName()))
-                    answerMap.put(node.getNodeClassName(),n++);
-
-                if (answerMap.size()==2)
-                    break;
-            }
-
             n=0;
             String[] keyArray = new String[2];
             for (String key :answerMap.keySet())
                 keyArray[n++]=key;
-
-            Collections.shuffle(nodeTrainList);
-            Perceptron perceptron = new Perceptron(nodeTestList.get(0).getAttributesColumn().size(),alpha);
-            for (Node value : nodeTrainList)
-                perceptron.learn(value, answerMap.get(value.getNodeClassName()));
 
             int numberOfCorrectAnswerOfFirstClass = 0;
             int numberOfCorrectAnswerOfSecondClass = 0;
@@ -67,7 +83,6 @@ public class main {
                 if (answerMap.get(node.getNodeClassName()) == 1)
                     numberOfAppearancesOfSecondClass++;
 
-
                 if (answerMap.get(keyArray[0]) == y && y == answerMap.get(node.getNodeClassName()))
                     numberOfCorrectAnswerOfFirstClass++;
 
@@ -78,7 +93,7 @@ public class main {
             System.out.println("Accuracy for "+ keyArray[0]+ ": "+ ((double) numberOfCorrectAnswerOfFirstClass/numberOfAppearancesOfFirstClass)*100+"%");
             System.out.println("Accuracy for "+ keyArray[1]+ ": "+ (double) numberOfCorrectAnswerOfSecondClass/numberOfAppearancesOfSecondClass*100+"%");
             System.out.println("Total accuracy: "+ (double) (numberOfCorrectAnswerOfFirstClass+numberOfCorrectAnswerOfSecondClass)/nodeTestList.size()*100+"%");
-            System.out.println("Final Vector: "+perceptron.getVectorW()+ " THETA THRESHOLD: "+ perceptron.getThetaThreshold());
+            System.out.println("Final Vector: "+perceptron.getVectorW()+ " Theta threshold: "+ perceptron.getThetaThreshold());
         }
     }
 

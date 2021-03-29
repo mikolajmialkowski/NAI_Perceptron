@@ -41,9 +41,12 @@ public class Perceptron {
         for (int i = 0; i < node.getAttributesColumn().size() ; i++) // Calculate X * W
             net += node.getAttributesColumn().get(i) * this.vectorW.get(i);
 
-        int y = net >= this.thetaThreshold?1:0;
+        //net = d - theta
+
+        int y = (net>=this.thetaThreshold?1:0);
 
         if (y != correctAnswer) { //Do learn
+            //System.out.println("LEARN!");
             List<Double> vectorWPrime = new ArrayList<>(this.vectorW);
             for (int i = 0; i < node.getAttributesColumn().size(); i++) // W' = W + (Correct-Y) * Alpha * X
                 vectorWPrime.set(i, (this.vectorW.get(i) + ((correctAnswer - y) * alpha * node.getAttributesColumn().get(i))));
