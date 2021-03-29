@@ -16,16 +16,14 @@ public class Perceptron {
 
         this.thetaThreshold = Math.random()*10-5;
 
-       /* for (int i = 0; i < vectorW.size() ; i++) {
-            vectorW.set(i,5.0);
-        }*/
 
-        /*vectorW.set(0,0d);
-        vectorW.set(1,0d);
-        vectorW.set(2,0d);
-        vectorW.set(3,0d);
 
-        thetaThreshold=0;*/
+        /*vectorW.set(0,5d);
+        vectorW.set(1,d5d);
+        vectorW.set(2,5d);
+        vectorW.set(3,5d);
+
+        thetaThreshold=0.05;*/
 
     }
 
