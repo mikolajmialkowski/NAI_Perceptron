@@ -28,16 +28,13 @@ public class main {
                 List<Node> nodeSet = new ArrayList<>();
                 String[] tmp = line.split(";");
                 List<Double> attributesColumn = new ArrayList<>();
-
-
             }
         }
         else{
             nodeTestList = getNodeList(testSetAddress);
 
-            HashMap<String,Integer> answerMap = new HashMap<>();
-
             int n=0;
+            HashMap<String,Integer> answerMap = new HashMap<>();
             for (Node node : nodeTrainList) {
                 if (!answerMap.containsKey(node.getNodeClassName()))
                     answerMap.put(node.getNodeClassName(),n++);
@@ -46,61 +43,42 @@ public class main {
                     break;
             }
 
-            String[] keyArray = new String[2];
             n=0;
-
-            System.out.println("ANSWER KEY: ");
-            for (String key :answerMap.keySet()) {
-                System.out.println("KEY =  " + key + " " + answerMap.get(key));
+            String[] keyArray = new String[2];
+            for (String key :answerMap.keySet())
                 keyArray[n++]=key;
-            }
 
             Collections.shuffle(nodeTrainList);
-
             Perceptron perceptron = new Perceptron(nodeTestList.get(0).getAttributesColumn().size(),alpha);
-            for (int i = 0; i < nodeTrainList.size() ; i++) {
-
-                //System.out.println();
-               //System.out.println(perceptron);
-                perceptron.learn(nodeTrainList.get(i),answerMap.get(nodeTrainList.get(i).getNodeClassName()));
-
-            }
+            for (Node value : nodeTrainList)
+                perceptron.learn(value, answerMap.get(value.getNodeClassName()));
 
             int numberOfCorrectAnswerOfFirstClass = 0;
             int numberOfCorrectAnswerOfSecondClass = 0;
             int numberOfAppearancesOfFirstClass = 0;
             int numberOfAppearancesOfSecondClass = 0;
 
+            for (Node node : nodeTestList) {
+                int y = perceptron.evaluate(node);
 
-            for (int i = 0; i < nodeTestList.size() ; i++) {
-                int y = perceptron.evaluate(nodeTestList.get(i));
-                //System.out.println("Y = " + y+ " CORRECT ANSWER = "+ answerMap.get(nodeTestList.get(i).getNodeClassName()));
-
-                if (answerMap.get(nodeTestList.get(i).getNodeClassName()) == 0)
+                if (answerMap.get(node.getNodeClassName()) == 0)
                     numberOfAppearancesOfFirstClass++;
 
-                if (answerMap.get(nodeTestList.get(i).getNodeClassName()) == 1)
+                if (answerMap.get(node.getNodeClassName()) == 1)
                     numberOfAppearancesOfSecondClass++;
 
 
-                if (answerMap.get(keyArray[0]) == y && y == answerMap.get(nodeTestList.get(i).getNodeClassName()))
+                if (answerMap.get(keyArray[0]) == y && y == answerMap.get(node.getNodeClassName()))
                     numberOfCorrectAnswerOfFirstClass++;
 
-                if (answerMap.get(keyArray[1]) == y && y == answerMap.get(nodeTestList.get(i).getNodeClassName()))
+                if (answerMap.get(keyArray[1]) == y && y == answerMap.get(node.getNodeClassName()))
                     numberOfCorrectAnswerOfSecondClass++;
             }
 
             System.out.println("Accuracy for "+ keyArray[0]+ ": "+ ((double) numberOfCorrectAnswerOfFirstClass/numberOfAppearancesOfFirstClass)*100+"%");
             System.out.println("Accuracy for "+ keyArray[1]+ ": "+ (double) numberOfCorrectAnswerOfSecondClass/numberOfAppearancesOfSecondClass*100+"%");
             System.out.println("Total accuracy: "+ (double) (numberOfCorrectAnswerOfFirstClass+numberOfCorrectAnswerOfSecondClass)/nodeTestList.size()*100+"%");
-
-
-            System.out.println("VECTOR = "+perceptron.getVectorW()+ " THETA = "+ perceptron.getThetaThreshold());
-
-
-
-
-
+            System.out.println("Final Vector: "+perceptron.getVectorW()+ " THETA THRESHOLD: "+ perceptron.getThetaThreshold());
         }
     }
 
