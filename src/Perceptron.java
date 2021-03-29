@@ -15,6 +15,18 @@ public class Perceptron {
             this.vectorW.add((Math.random()*10)-5);
 
         this.thetaThreshold = Math.random()*10-5;
+
+       /* for (int i = 0; i < vectorW.size() ; i++) {
+            vectorW.set(i,5.0);
+        }*/
+
+        /*vectorW.set(0,0d);
+        vectorW.set(1,0d);
+        vectorW.set(2,0d);
+        vectorW.set(3,0d);
+
+        thetaThreshold=0;*/
+
     }
 
     public List<Double> getVectorW() {
@@ -48,24 +60,32 @@ public class Perceptron {
 
         int y = net >= this.thetaThreshold?1:0;
 
-        if (y == correctAnswer) // NIE DOSZLO DO NAUKI PERCEPTRONU (vector W jest optymalny?)
+        //System.out.println("NET = "+ net);
+
+        if (y == correctAnswer) { // NIE DOSZLO DO NAUKI PERCEPTRONU (vector W jest optymalny?)
+            //System.out.println("Y = "+ y + " CORRECT-ANSWER = "+ correctAnswer + " BRAK NAUKI -----------------------------------");
             return true;
 
+        }
+
+
+
         // (CorrectAnswer != Y) --> start learning
+        else {
+            //System.out.println("Y = "+ y + " CORRECT-ANSWER = "+ correctAnswer + " ROZPOCZATO NAUKE +++++++++++++++++++++++++++++++++");
 
-        List<Double> vectorWPrime = new ArrayList<>(this.vectorW);
-        double thetaThresholdPrime = this.thetaThreshold;
+            List<Double> vectorWPrime = new ArrayList<>(this.vectorW);
 
+            for (int i = 0; i < node.getAttributesColumn().size(); i++) // W' = W + (1-0) * alpha * X
+                vectorWPrime.set(i, (this.vectorW.get(i) + ((correctAnswer - y) * alpha * node.getAttributesColumn().get(i))));
 
-        for (int i = 0; i < node.getAttributesColumn().size() ; i++) // W' = W + (1-0) * alpha * X
-            vectorWPrime.set(i, (vectorWPrime.get(i) + ((correctAnswer-y)*alpha*node.getAttributesColumn().get(i))) );
+            double thetaThresholdPrime = thetaThreshold + (correctAnswer - y) * alpha * -1;
 
-        thetaThresholdPrime = thetaThreshold + (correctAnswer-y) * alpha * -1;
+            this.vectorW = vectorWPrime;
+            this.thetaThreshold = thetaThresholdPrime;
 
-        this.vectorW = vectorWPrime;
-        this.thetaThreshold = thetaThresholdPrime;
-
-        return false;
+            return false;
+        }
     }
 
     public int evaluate(Node node){
@@ -78,7 +98,14 @@ public class Perceptron {
         for (int i = 0; i < node.getAttributesColumn().size() ; i++) // Obliczenie X * W
             net += node.getAttributesColumn().get(i) * this.vectorW.get(i);
 
-        return  net >= this.thetaThreshold?1:0;
+        //System.out.println("THRESHOLD "+thetaThreshold);
+        //System.out.println("NET "+net);
+
+        if (net>=this.thetaThreshold)
+            return 1;
+
+        return 0;
+
 
     }
 

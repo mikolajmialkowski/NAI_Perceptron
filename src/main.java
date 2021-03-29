@@ -10,8 +10,8 @@ public class main {
         List<Node> nodeTrainList;
         List<Node> nodeTestList;
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("Pass K:");
-        int k = Integer.parseInt(bufferedReader.readLine());
+        System.out.println("Pass A:");
+        double alpha = Double.parseDouble(bufferedReader.readLine());
         System.out.println("Pass train-set:");
         String trainSetAddress = bufferedReader.readLine();
         System.out.println("Pass test-set: [type \"MY OWN VECTOR\", if you want to pass custom vector]");
@@ -35,13 +35,37 @@ public class main {
         else{
             nodeTestList = getNodeList(testSetAddress);
 
-            HashMap<Integer,String> answerMap = new HashMap<>();
+            HashMap<String,Integer> answerMap = new HashMap<>();
+
             int n=0;
             for (Node node : nodeTrainList) {
-                answerMap.put(n,node.getNodeClassName());
+                if (!answerMap.containsKey(node.getNodeClassName()))
+                    answerMap.put(node.getNodeClassName(),n++);
+
+                if (answerMap.size()==2)
+                    break;
             }
 
-            Perceptron perceptron = new Perceptron(nodeTestList.get(0).getAttributesColumn().size(),1);
+            System.out.println("ANSWER KEY: ");
+            for (String key :answerMap.keySet())
+                System.out.println("KEY =  "+ key +" "+ answerMap.get(key));
+
+
+            Collections.shuffle(nodeTrainList);
+
+            Perceptron perceptron = new Perceptron(nodeTestList.get(0).getAttributesColumn().size(),alpha);
+            for (int i = 0; i < nodeTrainList.size() ; i++) {
+
+                //System.out.println();
+               //System.out.println(perceptron);
+                perceptron.learn(nodeTrainList.get(i),answerMap.get(nodeTrainList.get(i).getNodeClassName()));
+
+            }
+
+            for (int i = 0; i < nodeTestList.size() ; i++) {
+                int y = perceptron.evaluate(nodeTestList.get(i));
+                System.out.println("Y = " + y+ " CORRECT ANSWER = "+ answerMap.get(nodeTestList.get(i).getNodeClassName()));
+            }
 
 
 
