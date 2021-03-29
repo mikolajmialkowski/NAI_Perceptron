@@ -35,6 +35,23 @@ public class main {
         else{
             nodeTestList = getNodeList(testSetAddress);
 
+            HashMap<Integer,String> answerMap = new HashMap<>();
+            int n=0;
+            for (Node node : nodeTrainList) {
+                answerMap.put(n,node.getNodeClassName());
+            }
+
+            Perceptron perceptron = new Perceptron(nodeTestList.get(0).getAttributesColumn().size(),1);
+
+
+
+
+
+
+
+
+
+
         }
     }
 
